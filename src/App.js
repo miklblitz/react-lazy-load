@@ -1,23 +1,35 @@
-import logo from './logo.svg';
+import React, {Suspense} from "react";
+import {useEffect} from 'react';
+import { Route, Switch } from 'react-router-dom';
+import lazyWithPreload from 'lazy-with-preload';
+
+import Cars from './Components/Cars/Cars';
 import './App.css';
 
+const Trucs = lazyWithPreload(() => import('./Components/Trucs/Trucs'));
+const Bikes = lazyWithPreload(() => import('./Components/Bikes/Bikes'));
+const Planes = lazyWithPreload(() => import('./Components/Planes/Planes'));
+
+const loadModules = () => {
+  Trucs.preload();
+  Bikes.preload();
+  Planes.preload();
+}
+
 function App() {
+  useEffect(() => {
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={'load_wrapper'} onMouseOver={loadModules}>
+      <Suspense fallback="">
+        <Switch>
+          <Route path="/" exact component={Cars} />
+          <Route path="/trucs" component={Trucs} />
+          <Route path="/bikes" component={Bikes} />
+          <Route path="/planes" component={Planes}/>
+        </Switch>
+      </Suspense>
     </div>
   );
 }
